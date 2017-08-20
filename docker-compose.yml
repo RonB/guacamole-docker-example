@@ -1,0 +1,47 @@
+version: '2.1'
+
+networks:
+
+  web:
+    external:
+      name: 'haproxy_default'
+
+  default:
+    driver: 'bridge'
+
+volumes:
+
+  db:
+    driver_opts:
+      device: /srv/guacamole/db
+      type: none
+      o: bind
+
+services:
+
+  sql:
+    image: postgres
+    restart: always
+    env_file: ./.env
+    networks:
+      default:
+    #ports:
+    #  - '5432:5432'
+    volumes:
+      - 'db:/var/lib/postgresql/db'
+
+  guacd:
+    image: guacamole/guacd
+    restart: always
+    env_file: ./.env
+
+  guacamole:
+    image: guacamole/guacamole
+    restart: always
+    env_file: ./.env
+    networks:
+      default:
+    #  web:
+    ports:
+      - '8080:8080'
+

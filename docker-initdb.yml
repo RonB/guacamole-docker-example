@@ -1,0 +1,26 @@
+version: '2.1'
+
+volumes:
+
+  db:
+    driver_opts:
+      device: /srv/guacamole/db
+      type: none
+      o: bind
+
+  initdb:
+    driver_opts:
+      device: /srv/guacamole/initdb.d
+      type: none
+      o: bind
+
+services:
+
+  sql:
+    image: postgres
+    restart: 'no'
+    env_file: ./.env
+    volumes:
+      - 'db:/var/lib/postgresql/db'
+      - 'initdb:/docker-entrypoint-initdb.d'
+
